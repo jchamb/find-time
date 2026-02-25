@@ -1,3 +1,5 @@
+.env
+.wrangler
 # Logs
 logs
 *.log
