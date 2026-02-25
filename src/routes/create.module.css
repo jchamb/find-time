@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 1rem;
+  background-color: #f6f7fb;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+.title {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.subtitle {
+  margin: 0 0 2rem 0;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

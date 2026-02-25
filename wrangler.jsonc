@@ -1,0 +1,55 @@
+{
+  // Wrangler config for find-time Cloudflare Worker
+  // See: https://developers.cloudflare.com/workers/wrangler/configuration/
+  "name": "find-time-worker",
+  "main": "./src/cf-worker/index.ts",
+  "compatibility_date": "2025-05-08",
+  "workers_dev": true,
+  // Durable Objects binding for sync backend
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SYNC_BACKEND_DO",
+        "class_name": "SyncBackendDO",
+      },
+    ],
+  },
+  // D1 SQLite database for event persistence
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "find-time",
+      "database_id": "f4712428-4514-441f-b1ec-6737dc58ff7f",
+    },
+  ],
+  // Migrations for Durable Object initialization
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["SyncBackendDO"],
+    },
+  ],
+  // Environment variables accessible to the worker
+  "vars": {
+    "ENVIRONMENT": "development",
+    "SYNC_AUTH_TOKEN": "insecure-token-change-me",
+  },
+  // Secrets (set via `wrangler secret put` in CLI)
+  // ADMIN_SECRET: optional API secret for admin operations
+  // Routes for this worker (configure for custom domains when ready)
+  // "routes": [
+  //   {
+  //     "pattern": "sync.your-domain.com/*",
+  //     "zone_name": "your-domain.com",
+  //   },
+  // ],
+  // Local dev settings
+  "env": {
+    "development": {
+      "vars": {
+        "ENVIRONMENT": "development",
+        "SYNC_AUTH_TOKEN": "insecure-token-change-me",
+      },
+    },
+  },
+}

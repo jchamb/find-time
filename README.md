@@ -40,15 +40,15 @@ export default defineConfig([
       // other options...
     },
   },
-])
+]);
 ```
 
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from 'eslint-plugin-react-x';
+import reactDom from 'eslint-plugin-react-dom';
 
 export default defineConfig([
   globalIgnores(['dist']),
@@ -69,5 +69,24 @@ export default defineConfig([
       // other options...
     },
   },
-])
+]);
 ```
+
+    ## Cloudflare LiveStore sync backend
+
+    This app uses the LiveStore Cloudflare sync provider. The backend worker lives in
+    `src/cf-worker/index.ts`, and the browser client connects via `VITE_LIVESTORE_SYNC_URL`.
+
+**📖 For complete setup and deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)**
+
+### Quick Start (Local Development)
+
+1. Ensure `.env` contains:
+   - `VITE_LIVESTORE_SYNC_URL=ws://localhost:8787`
+   - `VITE_LIVESTORE_SYNC_AUTH_TOKEN=insecure-token-change-me`
+2. Start development:
+   ```bash
+   pnpm dev
+   ```
+
+The sync worker will auto-start on port 8787.

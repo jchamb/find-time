@@ -1,0 +1,114 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: #f6f7fb;
+}
+
+.header {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.meetId {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  padding: 2rem;
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.successMessage {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 4px;
+  color: #166534;
+  font-size: 0.9rem;
+}
+
+.gridPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.placeholderText {
+  text-align: center;
+  color: #6b7280;
+}
+
+.gridPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background-color: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+}
+
+.placeholderText {
+  text-align: center;
+  color: #6b7280;
+}
+
+.placeholderText p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
