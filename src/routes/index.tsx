@@ -23,8 +23,8 @@ function HomePage() {
           textDecoration: 'none',
           border: 'none',
           borderRadius: '8px',
-          background: '#646cff',
-          color: 'white',
+          background: 'linear-gradient(135deg, var(--accent-strong), var(--accent))',
+          color: '#022721',
           display: 'inline-block',
         }}
       >

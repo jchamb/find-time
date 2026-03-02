@@ -46,6 +46,20 @@ This will:
 
 ## 🚀 Production Deployment
 
+### Quick deploy (recommended)
+
+After initial one-time setup (D1 + `SYNC_AUTH_TOKEN` secret), deploy everything with:
+
+```bash
+pnpm deploy
+```
+
+This command will:
+
+- Build the frontend
+- Deploy the Worker
+- Deploy frontend assets to Cloudflare Pages
+
 ### 1. Create D1 database (if not done already)
 
 ```bash

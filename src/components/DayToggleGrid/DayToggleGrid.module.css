@@ -8,32 +8,32 @@
   padding: 0.75rem 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--accent);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
-  background: white;
-  color: #2563eb;
+  background: var(--bg-1);
+  color: var(--accent);
 }
 
 .dayButton.enabled {
-  background: #2563eb;
-  color: white;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #022721;
 }
 
 .dayButton.enabled:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  filter: brightness(1.08);
+  border-color: var(--accent);
 }
 
 .dayButton.disabled {
-  background: white;
-  color: #d1d5db;
-  border-color: #d1d5db;
+  background: var(--bg-1);
+  color: var(--text-muted);
+  border-color: var(--border);
 }
 
 .dayButton.disabled:hover {
-  background: #f3f4f6;
+  background: var(--bg-2);
 }
 
 .dayButton:disabled {

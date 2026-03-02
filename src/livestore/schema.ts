@@ -186,26 +186,35 @@ const materializers = State.SQLite.materializers(events, {
       .update({ ...(title && { title }), timezone, windowStartTime, windowEndTime, slotMinutes, disabledDaysOfWeek })
       .where({ id }),
   'v1.ParticipantJoined': ({ id, meetId, name, timezone, joinedAt }) =>
-    tables.participants.insert({
-      id,
-      meetId,
-      name,
-      timezone,
-      joinedAt,
-      deletedAt: null,
-    }),
+    tables.participants
+      .insert({
+        id,
+        meetId,
+        name,
+        timezone,
+        joinedAt,
+        deletedAt: null,
+      })
+      .onConflict('id', 'update', {
+        meetId,
+        name,
+        timezone,
+        deletedAt: null,
+      }),
   'v1.ParticipantRenamed': ({ id, name }) => tables.participants.update({ name }).where({ id }),
   // 'v1.ParticipantLeft': ({ id, deletedAt }) => tables.participants.update({ deletedAt }).where({ id }),
   'v1.AvailabilityMarked': ({ id, meetId, participantId, dayOfWeek, startTime, endTime, createdAt }) =>
-    tables.availabilitySlots.insert({
-      id,
-      meetId,
-      participantId,
-      dayOfWeek: String(dayOfWeek),
-      startTime,
-      endTime,
-      createdAt,
-    }),
+    tables.availabilitySlots
+      .insert({
+        id,
+        meetId,
+        participantId,
+        dayOfWeek: String(dayOfWeek),
+        startTime,
+        endTime,
+        createdAt,
+      })
+      .onConflict('id', 'ignore'),
   'v1.AvailabilityUnmarked': ({ id }) => tables.availabilitySlots.delete().where({ id }),
   'v1.ParticipantAvailabilityCleared': ({ participantId }) =>
     tables.availabilitySlots.delete().where({ participantId }),

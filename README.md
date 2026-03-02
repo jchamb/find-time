@@ -1,92 +1,99 @@
-# React + TypeScript + Vite
+# Find Time
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Find Time is a collaborative meeting availability app built with React, TanStack Router, and LiveStore.
+Users create a meeting, share a link, join as participants, and mark availability across a weekly time grid.
 
-Currently, two official plugins are available:
+## What this project does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Create meetings with:
+  - title
+  - timezone
+  - slot duration (`15`, `30`, or `60` minutes)
+  - start/end availability window
+  - excluded weekdays
+- Share a meeting URL with participants
+- Let participants join and mark/unmark available slots
+- Show overlap counts and participant names per slot
+- Allow meeting creators to edit meeting settings
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** React 19 + TypeScript + Vite
+- **Routing:** TanStack Router (file-based routes)
+- **State / Sync:** LiveStore (event-sourced local state + realtime sync)
+- **Backend sync:** Cloudflare Worker + Durable Object + D1
+- **Forms / validation:** React Hook Form + Zod
 
-## Expanding the ESLint configuration
+## Quick start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1) Install dependencies
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2) Configure local environment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+Frontend variables (copy or update `.env`):
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```env
+VITE_LIVESTORE_SYNC_URL=ws://localhost:8787
+VITE_LIVESTORE_SYNC_AUTH_TOKEN=<same-value-as-SYNC_AUTH_TOKEN-in-.dev.vars>
 ```
 
-    ## Cloudflare LiveStore sync backend
+Worker local secret (copy `.dev.vars.example` to `.dev.vars`):
 
-    This app uses the LiveStore Cloudflare sync provider. The backend worker lives in
-    `src/cf-worker/index.ts`, and the browser client connects via `VITE_LIVESTORE_SYNC_URL`.
+```env
+SYNC_AUTH_TOKEN=<same-value-as-VITE_LIVESTORE_SYNC_AUTH_TOKEN>
+```
 
-**📖 For complete setup and deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)**
+### 3) Start development
 
-### Quick Start (Local Development)
+```bash
+pnpm dev
+```
 
-1. Ensure `.env` contains:
-   - `VITE_LIVESTORE_SYNC_URL=ws://localhost:8787`
-   - `VITE_LIVESTORE_SYNC_AUTH_TOKEN=insecure-token-change-me`
-2. Start development:
-   ```bash
-   pnpm dev
-   ```
+This starts Vite and automatically starts `wrangler dev` for the sync worker when needed.
 
-The sync worker will auto-start on port 8787.
+## NPM scripts
+
+- `pnpm dev` — run app locally (and auto-start local sync backend if not running)
+- `pnpm build` — type-check + production build
+- `pnpm preview` — preview built app
+- `pnpm lint` — run ESLint
+- `pnpm cf:dev` — run Worker locally via Wrangler
+- `pnpm cf:deploy` — deploy Worker
+- `pnpm pages:deploy` — deploy static frontend to Cloudflare Pages
+- `pnpm deploy` — build + deploy Worker + deploy Pages
+
+## Environment files
+
+- `.env` (Vite/browser-exposed `VITE_*` values)
+- `.dev.vars` (local Worker secrets for Wrangler)
+- `.env.production` (frontend production values)
+- `.dev.vars.example` / `.env.example` (safe templates)
+
+> Keep auth tokens in sync between frontend and Worker:
+>
+> - `VITE_LIVESTORE_SYNC_AUTH_TOKEN` (frontend)
+> - `SYNC_AUTH_TOKEN` (Worker)
+
+## Key project paths
+
+- `src/routes/` — app pages (`/`, `/create`, `/meet/:meetId`, `/meet/:meetId/edit`)
+- `src/components/` — reusable UI + meeting form/grid components
+- `src/livestore/schema.ts` — event/table schema and materializers
+- `src/livestore/queries.ts` — query helpers
+- `src/cf-worker/index.ts` — Cloudflare sync backend entry
+- `wrangler.jsonc` — Worker bindings, D1, Durable Object, routes
+
+## Deployment
+
+For full Cloudflare deployment and troubleshooting, see:
+
+- [`DEPLOYMENT.md`](./DEPLOYMENT.md)
+
+## Notes
+
+- The root route currently uses a static LiveStore `storeId` (`find-time-app`) for shared collaboration.
+- The meeting page computes slot IDs deterministically as `${participantId}:${dayOfWeek}:${startTime}`.

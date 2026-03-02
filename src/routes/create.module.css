@@ -4,7 +4,7 @@
   justify-content: center;
   min-height: 100dvh;
   padding: 1rem;
-  background-color: #f6f7fb;
+  background-color: transparent;
   box-sizing: border-box;
 }
 
@@ -25,13 +25,13 @@
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .subtitle {
   margin: 0 0 2rem 0;
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .form {

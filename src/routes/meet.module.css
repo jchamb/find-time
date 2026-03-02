@@ -2,26 +2,26 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background-color: #f6f7fb;
+  background-color: transparent;
 }
 
 .header {
-  background: white;
+  background: linear-gradient(180deg, rgba(17, 40, 51, 0.95) 0%, rgba(11, 27, 36, 0.95) 100%);
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
   margin: 0 0 0.25rem 0;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .meetId {
   margin: 0;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-muted);
   font-family: 'Monaco', 'Courier New', monospace;
 }
 
@@ -58,7 +58,7 @@
   margin: 0 0 1.5rem 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .form {
@@ -70,10 +70,10 @@
 .successMessage {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #f0fdf4;
-  border-left: 4px solid #22c55e;
+  background-color: var(--success-bg);
+  border-left: 4px solid var(--success);
   border-radius: 4px;
-  color: #166534;
+  color: #d7fff6;
   font-size: 0.9rem;
 }
 
@@ -82,14 +82,14 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--border);
   border-radius: 8px;
-  background-color: #f9fafb;
+  background-color: var(--bg-1);
 }
 
 .placeholderText {
   text-align: center;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .gridPlaceholder {
@@ -97,14 +97,14 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background-color: #f9fafb;
-  border: 2px dashed #d1d5db;
+  background-color: var(--bg-1);
+  border: 2px dashed var(--border);
   border-radius: 8px;
 }
 
 .placeholderText {
   text-align: center;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .placeholderText p {

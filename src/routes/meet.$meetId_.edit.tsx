@@ -29,7 +29,7 @@ function EditMeetingPage() {
   // Redirect if not creator
   if (meet && !isCreator) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-primary)' }}>
         <h1>Access Denied</h1>
         <p>Only the meeting creator can edit this meeting.</p>
         <button
@@ -38,8 +38,8 @@ function EditMeetingPage() {
           style={{
             marginTop: '1rem',
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#3b82f6',
-            color: 'white',
+            background: 'linear-gradient(135deg, var(--accent-strong), var(--accent))',
+            color: '#022721',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
@@ -53,7 +53,7 @@ function EditMeetingPage() {
 
   if (!meet) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
         <h2>Loading...</h2>
         <p>Loading meeting data...</p>
       </div>

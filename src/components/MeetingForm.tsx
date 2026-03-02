@@ -80,9 +80,11 @@ export function MeetingForm({
           style={{
             padding: '0.75rem',
             fontSize: '1rem',
-            border: '1px solid #d1d5db',
+            border: '1px solid var(--border)',
             borderRadius: '6px',
             fontFamily: 'inherit',
+            background: 'var(--surface)',
+            color: 'var(--text-primary)',
           }}
         >
           <option value="UTC">UTC</option>
@@ -187,9 +189,9 @@ export function MeetingForm({
             onClick={onCancel}
             style={{
               padding: '0.75rem 1.5rem',
-              backgroundColor: '#e5e7eb',
-              color: '#374151',
-              border: 'none',
+              backgroundColor: 'var(--surface)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)',
               borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: '500',

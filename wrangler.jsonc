@@ -26,29 +26,27 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["SyncBackendDO"],
+      "new_sqlite_classes": ["SyncBackendDO"],
     },
   ],
   // Environment variables accessible to the worker
   "vars": {
-    "ENVIRONMENT": "development",
-    "SYNC_AUTH_TOKEN": "insecure-token-change-me",
+    "ENVIRONMENT": "production",
   },
   // Secrets (set via `wrangler secret put` in CLI)
   // ADMIN_SECRET: optional API secret for admin operations
-  // Routes for this worker (configure for custom domains when ready)
-  // "routes": [
-  //   {
-  //     "pattern": "sync.your-domain.com/*",
-  //     "zone_name": "your-domain.com",
-  //   },
-  // ],
+  // Route sync traffic from custom domain.
+  "routes": [
+    {
+      "pattern": "findtime.jchamb.com/sync*",
+      "zone_name": "jchamb.com",
+    },
+  ],
   // Local dev settings
   "env": {
     "development": {
       "vars": {
         "ENVIRONMENT": "development",
-        "SYNC_AUTH_TOKEN": "insecure-token-change-me",
       },
     },
   },

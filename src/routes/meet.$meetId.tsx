@@ -1,6 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { useState, useCallback, useMemo } from 'react';
+import { Check, Settings, Share2 } from 'lucide-react';
+
 import { useUserProfile, useUpdateUserProfile } from '../features/meetings/lib/profile-storage';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -22,12 +24,12 @@ interface ParticipantFormData {
 }
 
 function MeetingPage() {
-  const navigate = useNavigate();
   const { meetId } = Route.useParams();
   const profile = useUserProfile();
   const updateProfile = useUpdateUserProfile();
   const { store } = useStore();
   const [copied, setCopied] = useState(false);
+  const participantId = `${meetId}:${profile.userId}`;
 
   const meetRows = store.useQuery(meetById$(meetId));
   const participants = store.useQuery(participantsByMeet$(meetId));
@@ -55,19 +57,19 @@ function MeetingPage() {
   }, [meetConfig.timezone, userTimezone]);
 
   const isJoined = useMemo(
-    () => participants.some((participant) => participant.id === profile.userId),
-    [participants, profile.userId],
+    () => participants.some((participant) => participant.id === participantId),
+    [participants, participantId],
   );
 
   const markedSlots = useMemo(() => {
     const set = new Set<string>();
     availability.forEach((slot) => {
-      if (slot.participantId === profile.userId) {
+      if (slot.participantId === participantId) {
         set.add(slot.id);
       }
     });
     return set;
-  }, [availability, profile.userId]);
+  }, [availability, participantId]);
 
   const { timeSlots, activeDays } = useMemo(() => {
     const start = toMinutes(meetConfig.windowStartTime);
@@ -114,7 +116,7 @@ function MeetingPage() {
         const endMinutes = toMinutes(time) + meetConfig.slotMinutes;
         const endTime = `${pad2(Math.floor(endMinutes / 60))}:${pad2(endMinutes % 60)}`;
 
-        const id = `${profile.userId}:${day.value}:${time}`;
+        const id = `${participantId}:${day.value}:${time}`;
         info.set(id, {
           dayOfWeek: day.value,
           startTime: time,
@@ -132,7 +134,7 @@ function MeetingPage() {
     });
 
     return { availabilityData: data, slotInfoById: info };
-  }, [availability, participants, activeDays, timeSlots, profile.userId, meetConfig.slotMinutes]);
+  }, [availability, participants, activeDays, timeSlots, participantId, meetConfig.slotMinutes]);
 
   const {
     register,
@@ -157,7 +159,7 @@ function MeetingPage() {
           events.availabilityMarked({
             id: slotId,
             meetId,
-            participantId: profile.userId,
+            participantId,
             dayOfWeek: slotInfo.dayOfWeek,
             startTime: slotInfo.startTime,
             endTime: slotInfo.endTime,
@@ -173,14 +175,13 @@ function MeetingPage() {
     } catch (error) {
       console.error('Failed to update availability:', error);
     }
-  }, [meetId, profile.userId, slotInfoById, store]);
+  }, [meetId, participantId, slotInfoById, store]);
 
   const onSubmit = async (data: ParticipantFormData) => {
-    const participantId = profile.userId;
     try {
       // Save profile locally
       updateProfile({
-        userId: participantId,
+        userId: profile.userId,
         ...data,
       });
 
@@ -232,7 +233,7 @@ function MeetingPage() {
   const meet = meetRows[0];
   if (!meet) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
         <h2>Loading...</h2>
         <p>Loading meeting data...</p>
       </div>
@@ -248,23 +249,22 @@ function MeetingPage() {
             <p className={styles.meetId}>Meeting ID: {meetId.slice(0, 8)}...</p>
           </div>
           {isCreator && (
-            <button
-              type="button"
-              onClick={() => navigate({ to: '/meet/$meetId/edit', params: { meetId } })}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm font-medium"
-              title="Edit meeting settings"
+            <Button
+              to={`/meet/${meetId}/edit`}
+              variant='secondary'
             >
-              Edit
-            </button>
+              <Settings className="mr-2" /> Edit
+            </Button>
           )}
-          <button
+          <Button
             type="button"
             onClick={handleShare}
-            className="ml-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
+            className="ml-2"
+            variant={copied ? 'success' : 'primary'}
             title="Copy meeting link"
           >
-            {copied ? '✓ Copied' : 'Share'}
-          </button>
+            {copied ? <Check className="mr-2" /> : <Share2 className="mr-2" />} {copied ? 'Copied' : 'Share'}
+          </Button>
           
         </div>
       </header>
@@ -330,7 +330,7 @@ function MeetingPage() {
           {!isJoined && (
             <p style={{ 
               fontSize: '0.875rem', 
-              color: '#9ca3af', 
+              color: 'var(--text-muted)', 
               marginTop: '1rem',
               fontStyle: 'italic'
             }}>

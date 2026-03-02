@@ -71,9 +71,23 @@ export const AvailabilityGrid = ({
     return map;
   }, [slots]);
 
+  const allParticipantNames = useMemo(() => {
+    const uniqueNames = new Set<string>();
+    slots.forEach((slot) => {
+      slot.participantNames.forEach((name) => {
+        uniqueNames.add(name);
+      });
+    });
+
+    return Array.from(uniqueNames).sort((a, b) => a.localeCompare(b));
+  }, [slots]);
+
   // Find best time slot
-  const bestSlot = useMemo<{ day: number; time: string; count: number } | null>(() => {
-    let best: { day: number; time: string; count: number } | null = null;
+  const bestSlot = useMemo<
+    { day: number; time: string; count: number; availableNames: string[] } | null
+  >(() => {
+    let best: { day: number; time: string; count: number; availableNames: string[] } | null =
+      null;
 
     activeDays.forEach((dayObj) => {
       timeSlots.forEach((time) => {
@@ -82,7 +96,16 @@ export const AvailabilityGrid = ({
         const count = slot?.participantCount ?? 0;
 
         if (!best || count > best.count) {
-          best = { day: dayObj.value, time, count };
+          const availableNames = Array.from(new Set(slot?.participantNames ?? [])).sort((a, b) =>
+            a.localeCompare(b),
+          );
+
+          best = {
+            day: dayObj.value,
+            time,
+            count,
+            availableNames,
+          };
         }
       });
     });
@@ -90,28 +113,68 @@ export const AvailabilityGrid = ({
     return best;
   }, [activeDays, timeSlots, slotsByKey]);
 
-  // Get color intensity (0 = white, 1 = green)
+  const unavailableAtBestSlot = useMemo(() => {
+    if (!bestSlot) return [];
+
+    const availableNamesSet = new Set(bestSlot.availableNames);
+    return allParticipantNames.filter((name) => !availableNamesSet.has(name));
+  }, [bestSlot, allParticipantNames]);
+
+  // Get color intensity (0 = no availability, 1 = high availability)
   const getIntensity = (participantCount: number) => {
     if (participantCount === 0) return 0;
     // Assuming max ~10 participants
     return Math.min(1, participantCount / 10);
   };
 
-  const getBackgroundColor = (participantCount: number, isMySlot: boolean) => {
-    if (isMySlot) {
-      // Blue tint for my marked slots
-      return '#dbeafe';
+  const getCellBackground = (participantCount: number, isMySlot: boolean) => {
+    const intensity = getIntensity(participantCount);
+    if (intensity === 0) {
+      return 'transparent';
     }
 
+    // User-provided gradient baseline:
+    // linear-gradient(135deg, rgba(0,255,190,0.122) 0%, rgba(45,255,179,0.243) 50%, rgba(0,255,190,0.192) 100%)
+    // Scale alpha by availability to increase vibrancy/glow with participant count.
+    const baseStartAlpha = 0.122;
+    const baseMidAlpha = 0.243;
+    const baseEndAlpha = 0.192;
+
+    const intensityBoost = 1 + intensity * 2.4;
+    const markedBoost = isMySlot ? 1.45 : 1;
+    const alphaScale = intensityBoost * markedBoost;
+
+    const startAlpha = Math.min(0.82, baseStartAlpha * alphaScale).toFixed(3);
+    const midAlpha = Math.min(0.94, baseMidAlpha * alphaScale).toFixed(3);
+    const endAlpha = Math.min(0.88, baseEndAlpha * alphaScale).toFixed(3);
+
+    return `
+      linear-gradient(135deg,
+        rgba(0, 255, 190, ${startAlpha}) 0%,
+        rgba(45, 255, 179, ${midAlpha}) 50%,
+        rgba(0, 255, 190, ${endAlpha}) 100%)
+    `;
+  };
+
+  const getCellGlow = (participantCount: number, isMySlot: boolean) => {
     const intensity = getIntensity(participantCount);
-    if (intensity === 0) return 'white';
+    if (intensity === 0 && !isMySlot) {
+      return undefined;
+    }
 
-    // Interpolate from white to green
-    const r = Math.round(255 * (1 - intensity * 0.5));
-    const g = Math.round(200 + 55 * intensity);
-    const b = Math.round(255 * (1 - intensity * 0.8));
+    const glowBoost = isMySlot ? 1.35 : 1;
+    const innerAlpha = Math.min(0.95, (0.28 + intensity * 0.62) * glowBoost);
+    const outerAlpha = Math.min(0.72, (0.14 + intensity * 0.5) * glowBoost);
+    const bloomAlpha = Math.min(0.55, (0.08 + intensity * 0.36) * glowBoost);
+    const ringSize = isMySlot ? 2.2 : 1.8;
+    const outerSize = 8 + intensity * 20;
+    const bloomSize = 18 + intensity * 34;
 
-    return `rgb(${r}, ${g}, ${b})`;
+    return `
+      inset 0 0 0 ${ringSize}px rgba(45, 255, 179, ${innerAlpha.toFixed(3)}),
+      0 0 ${outerSize.toFixed(1)}px rgba(0, 255, 190, ${outerAlpha.toFixed(3)}),
+      0 0 ${bloomSize.toFixed(1)}px rgba(58, 217, 255, ${bloomAlpha.toFixed(3)})
+    `;
   };
 
   const handleMouseDown = (day: number, time: string, isMarked: boolean) => {
@@ -162,10 +225,25 @@ export const AvailabilityGrid = ({
       {bestSlot && (
         <div className={styles.bestSlotSummary}>
           <p className={styles.bestSlotText}>
-            <strong>Best time:</strong> {DAYS_OF_WEEK[bestSlot.day].longLabel} at{' '}
+            <strong>Best time:</strong>{' '}
+            {DAYS_OF_WEEK.find((day) => day.value === bestSlot.day)?.longLabel ?? 'Unknown day'} at{' '}
             {formatTimeForUser(bestSlot.time)}
             {bestSlot.count > 0 && ` (${bestSlot.count} available)`}
           </p>
+          <div className={styles.bestSlotPeople}>
+            <p className={styles.bestSlotPeopleText}>
+              <strong>Available:</strong>{' '}
+              {bestSlot.availableNames.length > 0
+                ? bestSlot.availableNames.join(', ')
+                : 'No one'}
+            </p>
+            <p className={styles.bestSlotPeopleText}>
+              <strong>Not available:</strong>{' '}
+              {unavailableAtBestSlot.length > 0
+                ? unavailableAtBestSlot.join(', ')
+                : 'None'}
+            </p>
+          </div>
         </div>
       )}
 
@@ -197,7 +275,11 @@ export const AvailabilityGrid = ({
                     key={key}
                     className={`${styles.availabilityCell} ${isMarked ? styles.marked : ''}`}
                     style={{
-                      backgroundColor: getBackgroundColor(
+                      background: getCellBackground(
+                        participantCount,
+                        isMarked,
+                      ),
+                      boxShadow: getCellGlow(
                         participantCount,
                         isMarked,
                       ),
@@ -208,7 +290,7 @@ export const AvailabilityGrid = ({
                     data-tooltip-content={
                       slot && slot.participantNames.length > 0
                         ? slot.participantNames.join(', ')
-                        : 'No availability'
+                        : 'No participants available'
                     }
                   >
                     {participantCount > 0 && (

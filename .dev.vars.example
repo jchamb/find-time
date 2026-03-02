@@ -1,0 +1,3 @@
+# Local-only Wrangler vars for `wrangler dev`
+# Copy to `.dev.vars` and keep it out of git.
+SYNC_AUTH_TOKEN=replace-with-secure-random-token

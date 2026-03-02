@@ -1,5 +1,9 @@
 .env
+.env.production
 .wrangler
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 # Logs
 logs
 *.log

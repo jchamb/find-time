@@ -7,18 +7,18 @@
 .label {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .hint {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .error {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: var(--danger);
   margin: 0;
   font-weight: 500;
 }

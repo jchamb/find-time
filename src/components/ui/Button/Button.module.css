@@ -1,7 +1,13 @@
 .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
   border: 1px solid transparent;
   border-radius: 6px;
   cursor: pointer;
@@ -9,26 +15,65 @@
   font-family: inherit;
 }
 
+.button:hover,
+.button:active,
+.button:focus {
+  text-decoration: none;
+}
+
 .button-primary {
-  background-color: #2563eb;
-  color: white;
-  border-color: #2563eb;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #022721;
+  border-color: transparent;
+}
+
+.button-primary:link,
+.button-primary:visited,
+.button-primary:hover:not(.disabled),
+.button-primary:active:not(.disabled) {
+  color: #022721;
 }
 
 .button-primary:hover:not(.disabled) {
-  background-color: #1d4ed8;
-  border-color: #1d4ed8;
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 0 1px rgba(41, 255, 209, 0.45),
+    0 0 18px rgba(41, 255, 209, 0.28);
 }
 
 .button-secondary {
-  background-color: transparent;
-  color: #374151;
-  border-color: #d1d5db;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.button-secondary:link,
+.button-secondary:visited,
+.button-secondary:hover:not(.disabled),
+.button-secondary:active:not(.disabled) {
+  color: var(--text-primary);
 }
 
 .button-secondary:hover:not(.disabled) {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
+  background-color: var(--surface-elevated);
+  border-color: var(--accent);
+}
+
+.button-success {
+  background-color: var(--success);
+  color: #022721;
+  border-color: var(--success);
+}
+
+.button-success:link,
+.button-success:visited,
+.button-success:hover:not(.disabled),
+.button-success:active:not(.disabled) {
+  color: #022721;
+}
+
+.button-success:hover:not(.disabled) {
+  filter: brightness(1.05);
 }
 
 .button.disabled {
